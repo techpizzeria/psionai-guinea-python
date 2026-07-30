@@ -8,7 +8,7 @@ import argparse
 import os
 import sys
 
-import openai
+from openai import OpenAI
 from dotenv import load_dotenv
 
 from summarizer.embeddings import embed_text
@@ -18,7 +18,8 @@ SYSTEM_PROMPT = "You are a concise assistant that summarizes documents in a few 
 
 def summarize(text: str, model: str = "gpt-3.5-turbo") -> str:
     """Return a short summary of ``text`` using the Chat Completion API."""
-    response = openai.ChatCompletion.create(
+    client = OpenAI()
+    response = client.chat.completions.create(
         model=model,
         messages=[
             {"role": "system", "content": SYSTEM_PROMPT},
@@ -27,7 +28,7 @@ def summarize(text: str, model: str = "gpt-3.5-turbo") -> str:
         temperature=0.3,
         max_tokens=256,
     )
-    return response["choices"][0]["message"]["content"].strip()
+    return response.choices[0].message.content.strip()
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -43,7 +44,8 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     load_dotenv()
-    openai.api_key = os.environ["OPENAI_API_KEY"]
+    # The OpenAI() client reads OPENAI_API_KEY from the environment; ensure it is set.
+    _ = os.environ["OPENAI_API_KEY"]
 
     try:
         with open(args.path, encoding="utf-8") as handle:
