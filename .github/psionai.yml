@@ -1,2 +1,5 @@
+# psionai config
+watch:
+  mode: aggressive
 limits:
-  max_open_prs: 2
+  max_open_prs: 99
