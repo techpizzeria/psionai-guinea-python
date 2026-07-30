@@ -1,0 +1,4 @@
+watch:
+  mode: aggressive
+limits:
+  max_open_prs: 99
